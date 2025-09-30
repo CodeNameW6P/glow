@@ -14,4 +14,6 @@ const client = new Client({
 clientReady(client);
 messageCreate(client);
 
-client.login(TOKEN);
+client.login(TOKEN).catch((error) => {
+	console.error("Failed to log in:", error);
+});

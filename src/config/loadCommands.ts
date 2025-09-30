@@ -10,8 +10,17 @@ export const loadCommands = (): Map<string, Command> => {
 		.filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
 
 	for (const file of commandFiles) {
-		const command: Command = require(path.join(commandsPath, file)).default;
-		commands.set(command.name, command);
+		try {
+			const command: Command = require(path.join(commandsPath, file)).default;
+			if (!command.name || !command?.execute) {
+				console.warn(`Skipping invalid command file: ${file}`);
+				continue;
+			}
+
+			commands.set(command.name, command);
+		} catch (error) {
+			console.error(`Failed to load command file "${file}":`, error);
+		}
 	}
 
 	return commands;
